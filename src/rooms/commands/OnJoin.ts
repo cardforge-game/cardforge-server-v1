@@ -27,7 +27,7 @@ export class OnJoinCommand extends Command<StandardState, IPayload> {
             name,
             money:300,
             //Set as host if the first player
-            host: (this.state.players.size === 1)
+            host: (this.state.players.size === 1 || this.state.players.size == 0)
         }
     ))
 
