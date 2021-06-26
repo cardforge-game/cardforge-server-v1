@@ -21,7 +21,7 @@ export class Card extends Schema {
 export class Player extends Schema {
   
   @type('string') name: string;
-  @type('boolean') host = false;
+  @type('boolean') host: boolean;
   @type([Card]) deck = new ArraySchema<Card>();
   @type(Card) activeCard: Card = null;
   @type('string') id: string;
