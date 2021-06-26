@@ -21,8 +21,3 @@ npm start
         - `npm start`: runs `ts-node-dev index.ts`
         - `npm run loadtest`: runs the [`@colyseus/loadtest`](https://github.com/colyseus/colyseus-loadtest/) tool for testing the connection, using the `loadtest/example.ts` script.
 - `tsconfig.json`: TypeScript configuration file
-
-
-## License
-
-MIT
