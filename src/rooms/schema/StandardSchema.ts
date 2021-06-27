@@ -63,7 +63,7 @@ export class StandardState extends Schema {
   @type(["string"]) playerIdOrder: string[];
   @type(["string"]) activePlayerID: string = null;
   @type("number") currentRound = 0;
-  @type("number") currentTurn = 0;
+  currentTurn = 0;
   cardLibrary = new ArraySchema<Card>();
 }
 

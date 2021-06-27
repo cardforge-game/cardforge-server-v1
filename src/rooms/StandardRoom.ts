@@ -114,7 +114,7 @@ export class StandardRoom extends Room<StandardState> {
   }
 }
 
-function getRound(phase: string, currentRound: number) {
+function getRound(phase: string, currentRound: number, room: StandardRoom) {
   let newPhase = "" as
     | "WAITING"
     | "CREATING"
@@ -124,7 +124,8 @@ function getRound(phase: string, currentRound: number) {
   let newWaitTime = 0;
   if (phase === "WAITING") {
     newPhase = "CREATING";
-    newWaitTime = 120 * 1000;
+    newWaitTime = 5 * 60 * 1000;
+    room.clock.start();
   } else if (phase === "CREATING") {
     newPhase = "BUYING";
     newWaitTime = 60 * 1000;
@@ -145,8 +146,8 @@ function getRound(phase: string, currentRound: number) {
 
 function gameLoop(room: StandardRoom) {
   console.log(`Current phase is ${room.state.phase}`);
-// Round Changer
-  const newRound = getRound(room.state.phase, room.state.currentRound);
+  // Round Changer
+  const newRound = getRound(room.state.phase, room.state.currentRound, room);
   room.state.phase = newRound.newPhase;
   room.waitTime = newRound.newWaitTime;
 
@@ -156,6 +157,8 @@ function gameLoop(room: StandardRoom) {
       gameLoop(room);
     }
   }, room.waitTime);
+
+  room.broadcast("resetClock", room.waitTime);
 
   // Round over
   if (room.state.phase === "RESULTS") {
