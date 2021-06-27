@@ -36,7 +36,7 @@ export class StandardState extends Schema {
   @type({map:Player}) players = new MapSchema<Player>();
   @type(["string"]) playerIdOrder: [string];
   @type("number") currentRound = 1;
-  @type([Card]) cardLibrary = new ArraySchema<Card>();
+  cardLibrary = new ArraySchema<Card>();
 
 }
 

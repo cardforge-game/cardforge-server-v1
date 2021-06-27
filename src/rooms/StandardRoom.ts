@@ -1,14 +1,35 @@
-import { Room, Client } from "colyseus";
+import { Room, Client, Delayed } from "colyseus";
 import { StandardState, ClientCardMessage } from "./schema/StandardSchema";
 import { Dispatcher } from "@colyseus/command";
 import CommandHandler from "./commands/CommandHandler"
 
 export class StandardRoom extends Room<StandardState> {
   dispatcher = new Dispatcher(this);
+  phaseInterval!: Delayed;
   onCreate (options: any) {
     this.setState(new StandardState());
 
-    //EVENTS ----------
+    //TIMING
+    this.clock.start()
+
+    this.phaseInterval = this.clock.setInterval(() =>{
+      console.log(`Current phase is ${this.state.phase}`)
+      if (this.state.phase !== 'FIGHTING') 
+        this.state.phase = (this.state.phase === 'WAITING') ? 'CREATING'
+          : (this.state.phase === 'CREATING') ? 'BUYING'
+          : 'FIGHTING'
+      else 
+        this.phaseInterval.clear()
+      if (this.state.phase === 'BUYING')
+        this.broadcast(
+          "library", 
+          this.state.cardLibrary.toJSON
+        )
+    }, 10000)
+    
+    // this.clock.setTimeout(() => {
+      
+    // }, 10000);
 
     //INPUT = ClientCardMessage
     this.onMessage("submitCard", (client, message:ClientCardMessage) => {

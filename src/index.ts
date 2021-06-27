@@ -18,10 +18,11 @@ const gameServer = new Server({
 //Setup Routes
 app.use("/colyseus", monitor());
 app.get("/", (req, res) => {
-    res.send("Built with <3");
+    // res.send("Built with <3");
+  res.send('<a href="https://www.instagram.com/therathulanand/">Built with <3</a>');
 })
 
 //Setup Rooms
 gameServer.define("standard",StandardRoom)
 gameServer.listen(port);
-console.log(`Card Server is up on ${port}`)
+console.log(`Card server is up on port ${port}`)

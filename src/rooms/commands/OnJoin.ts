@@ -21,14 +21,12 @@ export class OnJoinCommand extends Command<StandardState, IPayload> {
   }
 
   execute({ client,name }: IPayload) {
-	this.state.players.set(client.sessionId, new Player({
-			name,
-			money: 300,
-			host: (this.state.players.size === 1 || this.state.players.size == 0)
-		}
-	))
-
-
+		this.state.players.set(client.sessionId, new Player({
+				name,
+				money: 300,
+				host: (this.state.players.size === 0)
+			}
+		))
   }
 
 }
