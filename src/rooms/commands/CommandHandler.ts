@@ -11,7 +11,6 @@ import {
 import { NextPhaseCommand } from "./NextPhase";
 import { InitRoundCommand } from "./InitRound";
 import { TurnLoopCommand } from "./TurnLoop";
-import { DisplayResultsCommand } from "./DisplayResults";
 import { GiveMoneyCommand } from "./GiveMoney";
 
 //TODO: automatically do that?
@@ -27,7 +26,6 @@ export default {
   NextPhaseCommand,
   InitRoundCommand,
   TurnLoopCommand,
-  DisplayResultsCommand,
   GiveMoneyCommand,
   PreviewCardCommand,
 };

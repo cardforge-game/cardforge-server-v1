@@ -21,6 +21,7 @@ export class StandardRoom extends Room<StandardState> {
         !this.phaseInterval
       ) {
         //Start Loop
+        this.state.phaseRounds = 0
         gameLoop(this);
       }
     });
@@ -114,7 +115,7 @@ export class StandardRoom extends Room<StandardState> {
   }
 }
 
-function getRound(phase: string, currentRound: number, room: StandardRoom) {
+function getRound(phase: string, currentPhaseRound: number, room: StandardRoom) {
   let newPhase = "" as
     | "WAITING"
     | "CREATING"
@@ -124,21 +125,21 @@ function getRound(phase: string, currentRound: number, room: StandardRoom) {
   let newWaitTime = 0;
   if (phase === "WAITING") {
     newPhase = "CREATING";
-    newWaitTime = 0.5 * 60 * 1000;
+    newWaitTime = 2 * 60 * 1000;
     room.clock.start();
   } else if (phase === "CREATING") {
     newPhase = "BUYING";
-    newWaitTime = 0.25 * 60 * 1000;
+    newWaitTime = 0.75 * 60 * 1000;
   } else if (phase === "BUYING") {
     newPhase = "FIGHTING";
     newWaitTime = 150 * 1000;
   } else if (phase === "FIGHTING") {
-    if (currentRound >= 5) {
+    if (currentPhaseRound >= 5) {
       newPhase = "RESULTS";
       newWaitTime = 30 * 1000;
     } else {
       newPhase = "CREATING";
-      newWaitTime = 0.5 * 60 * 1000;
+      newWaitTime = 2 * 60 * 1000;
     }
   }
   return { newPhase, newWaitTime };
@@ -147,7 +148,7 @@ function getRound(phase: string, currentRound: number, room: StandardRoom) {
 function gameLoop(room: StandardRoom) {
   console.log(`Current phase is ${room.state.phase}`);
   // Round Changer
-  const newRound = getRound(room.state.phase, room.state.currentRound, room);
+  const newRound = getRound(room.state.phase, room.state.phaseRounds, room);
   room.state.phase = newRound.newPhase;
   room.waitTime = newRound.newWaitTime;
 
@@ -197,5 +198,16 @@ function gameLoop(room: StandardRoom) {
         room.dispatcher.dispatch(new CommandHandler.InitRoundCommand());
       }, 5000);
     }
+  }
+  if (room.state.phase === "RESULTS") {
+    //Send Points
+    const results = {} as Record<string,number>
+    //Add to results and reset
+    room.state.players.forEach(p=>{
+      results[p.name] = p.points
+      p.points = 0
+    })
+    //Send results
+    room.broadcast("results",results)
   }
 }

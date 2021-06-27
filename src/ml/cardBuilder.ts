@@ -81,13 +81,14 @@ export function buildCard(msg: ClientCardMessage, sessionId: string) {
     id: uniqid(),
     name: msg.name,
     health: msg.health,
+    maxHealth:msg.health,
     imgURL: msg.imgURL,
     ownerID: sessionId,
   });
 
   card.attacks = card.attacks.concat(attacks);
   card.cardCost = Math.round(
-    (card.health * 1.5) + (attacks.length) + (summed.attack * 0.5) + (summed.heal * 0.5)
+    (card.health * 1.75) + (attacks.length) + (summed.attack * 0.5) + (summed.heal * 0.75)
   );
   
   return card;

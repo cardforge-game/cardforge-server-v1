@@ -29,6 +29,7 @@ export class InitRoundCommand extends Command<StandardState> {
 
   initPlayerOrder() {
     this.state.currentRound++;
+    this.state.phaseRounds++;
     this.state.currentTurn = 0;
     const playersCopy = [...this.state.players];
     playersCopy.sort((a, b) => {

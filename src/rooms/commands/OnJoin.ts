@@ -29,7 +29,7 @@ export class OnJoinCommand extends Command<StandardState, IPayload> {
       new Player({
         id:client.sessionId,
         name,
-        money: 300,
+        money: 175,
         host: this.state.players.size === 0,
       })
     );

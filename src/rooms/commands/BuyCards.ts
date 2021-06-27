@@ -31,10 +31,11 @@ export class BuyCardCommand extends Command<StandardState, IPayload> {
   }
 
   execute({ client, buyingPlayer, buyingCard }: IPayload) {
-    buyingPlayer.inventory.push(buyingCard);
+    buyingPlayer.inventory.push(buyingCard.clone());
     buyingPlayer.money -= buyingCard.cardCost;
     this.state.players.get(buyingCard.ownerID).profits += Math.round(
       buyingCard.cardCost / 2
     );
+    this.state.players.get(buyingCard.ownerID).points++
   }
 }

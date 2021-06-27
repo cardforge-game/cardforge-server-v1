@@ -21,11 +21,13 @@ export class Card extends Schema {
   @type("number") health: number;
   @type("number") cardCost: number;
   @type("string") imgURL: string;
+  @type("number") maxHealth: number;
   @type([Attack]) attacks = new ArraySchema<Attack>();
   ownerID: string;
 }
 
 export class Player extends Schema {
+  points = 0;
   @type("string") name: string;
   @type("boolean") host: boolean;
   @type(Card) activeCard: Card = null;
@@ -53,6 +55,7 @@ export class Player extends Schema {
 }
 
 export class StandardState extends Schema {
+  phaseRounds = 0;
   @type("string") phase:
     | "WAITING"
     | "CREATING"

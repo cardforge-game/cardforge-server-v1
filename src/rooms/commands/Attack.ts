@@ -26,6 +26,9 @@ export class AttackCommand extends Command<StandardState, IPayload> {
     //Apply attack attributes
     receivingPlr.activeCard.health -= attack.damage;
     attackingPlr.activeCard.health += attack.heal;
+    
+    //Stop overhealing
+    attackingPlr.activeCard.health = Math.min(attackingPlr.activeCard.health, attackingPlr.activeCard.maxHealth);
 
      //Send attack info to clients
      this.room.broadcast("attacked",{
@@ -42,6 +45,7 @@ export class AttackCommand extends Command<StandardState, IPayload> {
       });
       receivingPlr.inventory.push(receivingPlr.activeCard);
       receivingPlr.activeCard = null;
+      attackingPlr.points += 2
 
      
 
