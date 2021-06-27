@@ -45,5 +45,6 @@ export class BuyCardCommand extends Command<StandardState, IPayload> {
     execute({ client, buyingPlayer, buyingCard }: IPayload) {
         buyingPlayer.inventory.push(buyingCard)
         buyingPlayer.money -= buyingCard.cardCost
+        this.state.players.get(buyingCard.ownerID).profits += Math.round(buyingCard.cardCost / 2)
     }
 }

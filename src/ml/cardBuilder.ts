@@ -55,7 +55,7 @@ export function buildCard(msg:ClientCardMessage,sessionId:string){
         name: msg.name,
         health:msg.health,
         imgURL: msg.imgURL,
-        ownerID:sessionId,
+        ownerID: sessionId,
         attacks
     })
     

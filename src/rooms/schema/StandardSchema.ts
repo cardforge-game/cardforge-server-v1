@@ -36,15 +36,19 @@ export class Player extends Schema {
   @filter(function(client:Client, value:string) {
     return client.sessionId === value
   }) @type([Card]) deck = new ArraySchema<Card>();
+
+  profits: number = 0;
+
 }
 
 export class StandardState extends Schema {
-  @type("string") phase: "WAITING"|"CREATING"|"BUYING"|"FIGHTING" = "WAITING"; // WAITING CREATING BUYING FIGHTING
+  @type("string") phase: "WAITING"|"CREATING"|"BUYING"|"FIGHTING"|"RESULTS" = "WAITING"; // WAITING CREATING BUYING FIGHTING
   @type({map:Player}) players = new MapSchema<Player>();
   @type(["string"]) playerIdOrder: [string];
-  @type("number") currentRound = 1;
+  @type(["string"]) activePlayerID: string = null;
+  @type("number") currentRound = 0;
+  @type("number") currentTurn = 0;
   cardLibrary = new ArraySchema<Card>();
-
 }
 
 export interface ClientCardMessage {
