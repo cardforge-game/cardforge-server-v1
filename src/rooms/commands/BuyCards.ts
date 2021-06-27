@@ -10,7 +10,7 @@ interface IPayload {
 
 export class BuyCardCommand extends Command<StandardState, IPayload> {
     validate({ client, buyingPlayer, buyingCard }: IPayload) {
-        if(!buyingCard){
+        if (!buyingCard) {
             client.send(
                 'error',
                 'This card does not exist'

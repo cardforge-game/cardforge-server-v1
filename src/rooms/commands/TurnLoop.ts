@@ -5,6 +5,7 @@ import { InitRoundCommand } from "./InitRound"
 export class TurnLoopCommand extends Command<StandardState> {
     async execute() {
       const roundNumOfTurn = JSON.parse(JSON.stringify(this.state.currentTurn))
+      this.state.currentTurn++
 
       // Everyone went
       if((this.state.playerIdOrder.length as number) === 0){

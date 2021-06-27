@@ -6,6 +6,7 @@ import CommandHandler from "./commands/CommandHandler"
 export class StandardRoom extends Room<StandardState> {
   dispatcher = new Dispatcher(this);
   phaseInterval!: Delayed;
+  chooseCardInterval!: Delayed;
   waitTime: number = 20 * 1000;
   onCreate(options: any) {
     this.setState(new StandardState());
@@ -15,12 +16,13 @@ export class StandardRoom extends Room<StandardState> {
 
     // Update phase
     this.phaseInterval = this.clock.setInterval(() => {
+
       console.log(`Current phase is ${this.state.phase}`)
       // Round Changer
-      const newRound = getRound(this.state.phase,this.state.currentRound)
-      this.state.phase  = newRound.newPhase
+      const newRound = getRound(this.state.phase, this.state.currentRound)
+      this.state.phase = newRound.newPhase
       this.waitTime = newRound.newWaitTime
-      
+
       // Round over
       if (this.state.phase === 'RESULTS') {
         this.phaseInterval.clear()
@@ -37,18 +39,33 @@ export class StandardRoom extends Room<StandardState> {
       }
 
       // Exiting buy round, entering fight round
-      if (this.state.phase === 'FIGHTING'){
-        // Calc turns and give players profits from buy round
-        this.dispatcher.dispatch(new CommandHandler.InitRoundCommand())
-        // Start first turn
-        this.dispatcher.dispatch(new CommandHandler.TurnLoopCommand())
+      if (this.state.phase === 'FIGHTING') {
+        //First turn conditions
+        if (this.state.currentTurn === 0) {
+          //25 seconds to pick a card
+          this.clock.setTimeout(() => {
+            //Auto give a card if afk
+            this.state.players.forEach(player => {
+              if (!player.activeCard && player.deck.length > 0)
+                this.dispatcher.dispatch(new CommandHandler.SetActiveCardCommand(), {
+                  player: player, newActiveCardIndex: 0
+                })
+            })
+
+            // Calc turns and give players profits from buy round
+            this.dispatcher.dispatch(new CommandHandler.InitRoundCommand())
+            // Start first turn
+            this.dispatcher.dispatch(new CommandHandler.TurnLoopCommand())
+
+          }, 25000)
+
+
+        }
+
+
 
       }
     }, this.waitTime)
-
-    // this.clock.setTimeout(() => {
-
-    // }, 10000);
 
     //INPUT = ClientCardMessage
     this.onMessage("submitCard", (client, message: ClientCardMessage) => {
@@ -129,8 +146,8 @@ export class StandardRoom extends Room<StandardState> {
   }
 }
 
-function getRound(phase:string,currentRound:number){
-  let newPhase = "" as "WAITING"|"CREATING"|"BUYING"|"FIGHTING"|"RESULTS"
+function getRound(phase: string, currentRound: number) {
+  let newPhase = "" as "WAITING" | "CREATING" | "BUYING" | "FIGHTING" | "RESULTS"
   let newWaitTime = 0;
   if (phase === 'WAITING') {
     phase = 'CREATING'
@@ -150,5 +167,5 @@ function getRound(phase:string,currentRound:number){
       newWaitTime = 120 * 1000
     }
   }
-  return {newPhase,newWaitTime}
+  return { newPhase, newWaitTime }
 }
