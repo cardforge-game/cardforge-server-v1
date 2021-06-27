@@ -43,6 +43,23 @@ export class StandardRoom extends Room<StandardState> {
         attackingPlr,receivingPlr,attackIndex:message.attackIndex
       })
     })
+    
+    //INPUT = {index}
+    this.onMessage("addCardToDeck", (client, message) => {
+      const player = this.state.players.get(client.sessionId)
+      this.dispatcher.dispatch(new CommandHandler.AddCardToDeckCommand(),{
+        player,index:message.index
+      })
+    })
+
+    //INPUT = {index}
+    this.onMessage("addCardToInventory", (client, message) => {
+      const player = this.state.players.get(client.sessionId)
+      this.dispatcher.dispatch(new CommandHandler.AddCardToInventoryCommand(),{
+        player,index:message.index
+      })
+    })
+    
   }
 
   onJoin (client: Client, options: any) {

@@ -31,11 +31,19 @@ export class BuyCardCommand extends Command<StandardState, IPayload> {
             )
             return false
         }
+        if (buyingPlayer.money < buyingCard.cardCost) {
+            client.send(
+                'error',
+                'You do not have enough money to buy this.'
+            )
+            return false
+        }
 
         return true
     }
 
     execute({ client, buyingPlayer, buyingCard }: IPayload) {
-        buyingPlayer.deck.push(buyingCard)
+        buyingPlayer.inventory.push(buyingCard)
+        buyingPlayer.money -= buyingCard.cardCost
     }
 }

@@ -22,13 +22,20 @@ export class Player extends Schema {
   
   @type('string') name: string;
   @type('boolean') host: boolean;
-  @type([Card]) deck = new ArraySchema<Card>();
   @type(Card) activeCard: Card = null;
   @type('string') id: string;
 
   @filter(function(client:Client, value:string) {
     return client.sessionId === value
   }) @type('number') money: number;
+
+  @filter(function(client:Client, value:string) {
+    return client.sessionId === value
+  }) @type([Card]) inventory = new ArraySchema<Card>();
+
+  @filter(function(client:Client, value:string) {
+    return client.sessionId === value
+  }) @type([Card]) deck = new ArraySchema<Card>();
 }
 
 export class StandardState extends Schema {
