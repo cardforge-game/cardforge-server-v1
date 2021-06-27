@@ -87,7 +87,7 @@ export function buildCard(msg: ClientCardMessage, sessionId: string) {
 
   card.attacks = card.attacks.concat(attacks);
   card.cardCost = Math.round(
-    card.health * 1.5 + attacks.length + summed.attack * 0.5 + summed.heal * 0.5
+    (card.health * 1.5) + (attacks.length) + (summed.attack * 0.5) + (summed.heal * 0.5)
   );
   
   return card;
