@@ -27,6 +27,13 @@ export class AttackCommand extends Command<StandardState, IPayload> {
     receivingPlr.activeCard.health -= attack.damage;
     attackingPlr.activeCard.health += attack.heal;
 
+     //Send attack info to clients
+     this.room.broadcast("attacked",{
+        attacker:attackingPlr.id,
+        reciever: receivingPlr.id,
+        attack
+    })
+
     //KNOCKOUT!
     if (receivingPlr.activeCard.health <= 0) {
       this.room.broadcast("knockout", {
@@ -35,6 +42,8 @@ export class AttackCommand extends Command<StandardState, IPayload> {
       });
       receivingPlr.inventory.push(receivingPlr.activeCard);
       receivingPlr.activeCard = null;
+
+     
 
       //10 Seconds to pick a new card
       if (receivingPlr.deck.length > 0) {

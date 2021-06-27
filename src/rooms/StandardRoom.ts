@@ -124,11 +124,11 @@ function getRound(phase: string, currentRound: number, room: StandardRoom) {
   let newWaitTime = 0;
   if (phase === "WAITING") {
     newPhase = "CREATING";
-    newWaitTime = 2 * 60 * 1000;
+    newWaitTime = 0.5 * 60 * 1000;
     room.clock.start();
   } else if (phase === "CREATING") {
     newPhase = "BUYING";
-    newWaitTime = 1 * 60 * 1000;
+    newWaitTime = 0.25 * 60 * 1000;
   } else if (phase === "BUYING") {
     newPhase = "FIGHTING";
     newWaitTime = 150 * 1000;
@@ -138,7 +138,7 @@ function getRound(phase: string, currentRound: number, room: StandardRoom) {
       newWaitTime = 30 * 1000;
     } else {
       newPhase = "CREATING";
-      newWaitTime = 120 * 1000;
+      newWaitTime = 0.5 * 60 * 1000;
     }
   }
   return { newPhase, newWaitTime };
@@ -195,7 +195,7 @@ function gameLoop(room: StandardRoom) {
 
         // Calc turns and give players profits from buy round
         room.dispatcher.dispatch(new CommandHandler.InitRoundCommand());
-      }, 25000);
+      }, 5000);
     }
   }
 }
