@@ -1,85 +1,85 @@
-import {Card,Attack,ClientCardMessage,} from "../rooms/schema/StandardSchema"
+import { Card, Attack, ClientCardMessage, } from "../rooms/schema/StandardSchema"
 import uniqid from "uniqid"
 
 const winkNLP = require('wink-nlp')
-const its = require( 'wink-nlp/src/its.js' )
-const as = require( 'wink-nlp/src/as.js' )
-const model = require( 'wink-eng-lite-model' )
+const its = require('wink-nlp/src/its.js')
+const as = require('wink-nlp/src/as.js')
+const model = require('wink-eng-lite-model')
 
 //Setup nlp
-const nlp = winkNLP( model );
+const nlp = winkNLP(model);
 const damageWords = ["damage"]
-const healthWords = ["health","hp","hit"]
+const healthWords = ["health", "hp", "hit"]
 const patterns = [
-  { name: 'damage', patterns: [ `[CARDINAL|NUM] [${damageWords.join("|")}]` ],mark:[0,0] },
-  { name: 'damage', patterns: [ `[${damageWords.join("|")}] [ADP] [CARDINAL|NUM]` ],mark:[2,2] },
-  { name: 'damage', patterns: [ `[CARDINAL|NUM] [|ADP] [PRON] [${damageWords.join("|")}]` ],mark:[0,0] },
-  { name: 'heal', patterns: [ `[CARDINAL|NUM] [|ADP] [PRON] [${healthWords.join("|")}]`],mark:[0,0] },
-  { name: 'heal', patterns: [ `[${healthWords.join("|")}] [ADP] [CARDINAL|NUM]` ],mark:[2,2] },
-  { name: 'heal', patterns: [ `[CARDINAL|NUM] [${healthWords.join("|")}]`],mark:[0,0] }
+  { name: 'damage', patterns: [`[CARDINAL|NUM] [${damageWords.join("|")}]`], mark: [0, 0] },
+  { name: 'damage', patterns: [`[${damageWords.join("|")}] [ADP] [CARDINAL|NUM]`], mark: [2, 2] },
+  { name: 'damage', patterns: [`[CARDINAL|NUM] [|ADP] [PRON] [${damageWords.join("|")}]`], mark: [0, 0] },
+  { name: 'heal', patterns: [`[CARDINAL|NUM] [|ADP] [PRON] [${healthWords.join("|")}]`], mark: [0, 0] },
+  { name: 'heal', patterns: [`[${healthWords.join("|")}] [ADP] [CARDINAL|NUM]`], mark: [2, 2] },
+  { name: 'heal', patterns: [`[CARDINAL|NUM] [${healthWords.join("|")}]`], mark: [0, 0] }
 ]
 nlp.learnCustomEntities(patterns)
 
 //Function to convert text to attack attributes
-function parseAttack(attack:string){
-    const moveAttributes = {
+function parseAttack(attack: string) {
+  const moveAttributes = {
 
-    } as Record<string,number>
-    const doc = nlp.readDoc(attack)
-    doc.customEntities().each((e:any)=>{
-      console.log(e.out())
-        const sentiment = e.parentSentence().out( its.sentiment )
-        const type = trueType(e.out(its.type),sentiment)
-        const value = e.out()
-        moveAttributes[type] = parseInt(value)
-    })
-    return moveAttributes;
+  } as Record<string, number>
+  const doc = nlp.readDoc(attack)
+  doc.customEntities().each((e: any) => {
+    console.log(e.out())
+    const sentiment = e.parentSentence().out(its.sentiment)
+    const type = trueType(e.out(its.type), sentiment)
+    const value = e.out()
+    moveAttributes[type] = parseInt(value)
+  })
+  return moveAttributes;
 }
 
 //Build a card from ClientCardMessage
-export function buildCard(msg:ClientCardMessage,sessionId:string){
-    //Build attacks
-    const summed = {
-      attack:0,
-      heal:0
-    } as Record<string,number>
-    const attacks = msg.attacks.map(attackString => {
-        const att = parseAttack(attackString)
-        for(const k in att){
-          summed[k] += att[k]
-        }
-        return new Attack({...att,desc:attackString})
-    })
-    const card = new Card({
-        id:uniqid(),
-        name: msg.name,
-        health:msg.health,
-        imgURL: msg.imgURL,
-        ownerID: sessionId,
-        attacks
-    })
-    
+export function buildCard(msg: ClientCardMessage, sessionId: string) {
+  //Build attacks
+  const summed = {
+    attack: 0,
+    heal: 0
+  } as Record<string, number>
+  const attacks = msg.attacks.map(attackString => {
+    const att = parseAttack(attackString)
+    for (const k in att) {
+      summed[k] += att[k]
+    }
+    return new Attack({ ...att, desc: attackString })
+  })
+  const card = new Card({
+    id: uniqid(),
+    name: msg.name,
+    health: msg.health,
+    imgURL: msg.imgURL,
+    ownerID: sessionId,
+    attacks
+  })
 
-    card.cardCost = Math.round(card.health * 1.5 + attacks.length + summed.attack * 0.5 + summed.heal * 0.5)
 
-    return card;
+  card.cardCost = Math.round(card.health * 1.5 + attacks.length + summed.attack * 0.5 + summed.heal * 0.5)
+
+  return card;
 }
 
 //Validate that the card built correctly
-export function validateCard(card:Card){
-    return card.attacks.every(a=>{
-        return Object.keys(a).length > 0
-    })
+export function validateCard(card: Card) {
+  return card.attacks.every(a => {
+    return Object.keys(a).length > 0
+  }) && card.health > 0
 }
 
 
 
 //Utils
-function trueType(type:string,sentiment:Number){
-  const trueIndex = (sentiment < 0) ? 0 : 1 
+function trueType(type: string, sentiment: Number) {
+  const trueIndex = (sentiment < 0) ? 0 : 1
 
   const typePairs = [
-    ["damage","heal"]
+    ["damage", "heal"]
   ]
 
   const typePair = typePairs.filter(pair => pair.includes(type))[0]

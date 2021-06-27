@@ -1,15 +1,26 @@
 import { Command } from '@colyseus/command'
 import { StandardState, Card, Player } from '../schema/StandardSchema'
-
+import { TurnLoopCommand } from './TurnLoop'
 export class InitRoundCommand extends Command<StandardState> {
     validate = () => true
 
     execute() {
         this.initPlayerOrder()
         this.giveProfits()
+        //Start First Turn
+        new TurnLoopCommand()
     }
 
     giveProfits = () => this.state.players.forEach(player => {
+        if(this.state.currentRound  > 0){
+            return;
+        }
+
+        //Show them their profits!
+        const client = this.room.clients.find(c => c.sessionId === player.id)
+        client.send("profits",player.profits)
+
+        //Add profits
         player.money += player.profits
         player.profits = 0
     })

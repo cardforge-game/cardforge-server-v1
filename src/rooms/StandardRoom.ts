@@ -40,6 +40,7 @@ export class StandardRoom extends Room<StandardState> {
 
       // Exiting buy round, entering fight round
       if (this.state.phase === 'FIGHTING') {
+        this.state.currentRound = 0
         //First turn conditions
         if (this.state.currentTurn === 0) {
           //25 seconds to pick a card
@@ -54,12 +55,9 @@ export class StandardRoom extends Room<StandardState> {
 
             // Calc turns and give players profits from buy round
             this.dispatcher.dispatch(new CommandHandler.InitRoundCommand())
-            // Start first turn
-            this.dispatcher.dispatch(new CommandHandler.TurnLoopCommand())
+    
 
           }, 25000)
-
-
         }
 
 
