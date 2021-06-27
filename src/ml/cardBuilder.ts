@@ -39,8 +39,16 @@ function parseAttack(attack:string){
 //Build a card from ClientCardMessage
 export function buildCard(msg:ClientCardMessage,sessionId:string){
     //Build attacks
+    const summed = {
+      attack:0,
+      heal:0
+    } as Record<string,number>
     const attacks = msg.attacks.map(attackString => {
-        return new Attack({...parseAttack(attackString),desc:attackString})
+        const att = parseAttack(attackString)
+        for(const k in att){
+          summed[k] += att[k]
+        }
+        return new Attack({...att,desc:attackString})
     })
     const card = new Card({
         id:uniqid(),
@@ -50,6 +58,9 @@ export function buildCard(msg:ClientCardMessage,sessionId:string){
         ownerID:sessionId,
         attacks
     })
+    
+
+    card.cardCost = Math.round(card.health * 1.5 + attacks.length + summed.attack * 0.5 + summed.heal * 0.5)
 
     return card;
 }
