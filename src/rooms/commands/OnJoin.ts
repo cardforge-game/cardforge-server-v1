@@ -1,32 +1,36 @@
 // OnJoinCommand.ts
 import { Command } from "@colyseus/command";
-import {Client} from "colyseus";
-import { StandardState,Player } from "../schema/StandardSchema";
-
+import { Client } from "colyseus";
+import { StandardState, Player } from "../schema/StandardSchema";
 
 interface IPayload {
-	client: Client;
-	name: string;
+  client: Client;
+  name: string;
 }
 
 export class OnJoinCommand extends Command<StandardState, IPayload> {
-  validate({client,name}: IPayload){
+  validate({ client, name }: IPayload) {
+    if ([...this.state.players.values()].some((p) => p.name === name)) {
+      client.send("error", "That name is already in use!");
+      return false;
+    }
 
-	if ([...this.state.players.values()].some(p => p.name === name)) {
-		client.send("error","That name is already in use!")
-		return false
-	}
-	
-	return true
+    if(name.length < 3){
+      client.send("error", "That name is too short!");
+      return false;
+    }
+
+    return true;
   }
 
-  execute({ client,name }: IPayload) {
-		this.state.players.set(client.sessionId, new Player({
-				name,
-				money: 225,
-				host: (this.state.players.size === 0)
-			}
-		))
+  execute({ client, name }: IPayload) {
+    this.state.players.set(
+      client.sessionId,
+      new Player({
+        name,
+        money: 225,
+        host: this.state.players.size === 0,
+      })
+    );
   }
-
 }
