@@ -57,6 +57,14 @@ export class StandardRoom extends Room<StandardState> {
       })
     })
 
+    //INPUT = ClientCardMessage
+    this.onMessage("previewCard", (client, message: ClientCardMessage) => {
+      this.dispatcher.dispatch(new CommandHandler.PreviewCardCommand(), {
+        client, cardInput: message
+      })
+    })
+
+
     //INPUT = {id}
     this.onMessage("buyCard", (client, message) => {
       const buyingPlayer = this.state.players.get(client.sessionId)
