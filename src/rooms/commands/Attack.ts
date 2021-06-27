@@ -17,7 +17,7 @@ export class AttackCommand extends Command<StandardState, IPayload> {
     );
   }
 
-  execute({ attackingPlr, receivingPlr, attackIndex }: IPayload) {
+  async execute({ attackingPlr, receivingPlr, attackIndex }: IPayload) {
     //Incerment Current Turn
     this.state.currentTurn++;
 
@@ -31,7 +31,7 @@ export class AttackCommand extends Command<StandardState, IPayload> {
     if (receivingPlr.activeCard.health <= 0) {
       this.room.broadcast("knockout", {
         attacker: attackingPlr.id,
-        receivingPlr: receivingPlr.id,
+        reciever: receivingPlr.id,
       });
       receivingPlr.inventory.push(receivingPlr.activeCard);
       receivingPlr.activeCard = null;
@@ -40,15 +40,22 @@ export class AttackCommand extends Command<StandardState, IPayload> {
       if (receivingPlr.deck.length > 0) {
         this.delay(10000);
         if (receivingPlr.activeCard === null) {
-          new CommandHandler.SetActiveCardCommand().setPayload({
+          return [new CommandHandler.SetActiveCardCommand().setPayload({
             player: receivingPlr,
             newActiveCardIndex: 0,
-          });
+          }), new CommandHandler.TurnLoopCommand()]
+        } else {
+          return new CommandHandler.TurnLoopCommand();
         }
+      } else {
+        return new CommandHandler.TurnLoopCommand();
       }
+
+    } else {
+      this.delay(2000);
+      return new CommandHandler.TurnLoopCommand();
     }
 
-    //TODO: call TurnLoop Again :)
-    return new CommandHandler.TurnLoopCommand();
+    
   }
 }

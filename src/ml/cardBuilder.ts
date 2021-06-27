@@ -74,7 +74,6 @@ export function buildCard(msg: ClientCardMessage, sessionId: string) {
     for (const k in att) {
       summed[k] += att[k];
     }
-    console.log(att);
     return new Attack({ damage: 0, heal: 0, desc: attack.desc, name: attack.name, ...att });
   });
 
@@ -90,8 +89,6 @@ export function buildCard(msg: ClientCardMessage, sessionId: string) {
   card.cardCost = Math.round(
     card.health * 1.5 + attacks.length + summed.attack * 0.5 + summed.heal * 0.5
   );
-
-  console.log(card.attacks[0]);
   
   return card;
 }

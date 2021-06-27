@@ -3,7 +3,8 @@ import { StandardState, Card, Attack, Player } from "../schema/StandardSchema";
 import { InitRoundCommand } from "./InitRound";
 
 export class TurnLoopCommand extends Command<StandardState> {
-  async execute() {
+  async execute(): Promise<InitRoundCommand|TurnLoopCommand> {
+    console.log("new Turn!")
     const roundNumOfTurn = JSON.parse(JSON.stringify(this.state.currentTurn));
     this.state.currentTurn++;
 
@@ -13,23 +14,23 @@ export class TurnLoopCommand extends Command<StandardState> {
     }
 
     this.state.activePlayerID = this.state.playerIdOrder.splice(0, 1)[0];
+    console.log(this.state.activePlayerID)
     const activePlayer = this.state.players.get(this.state.activePlayerID);
 
     // Active player does not have any cards
     if (activePlayer.deck.length === 0) {
-      new TurnLoopCommand();
-      return;
+      return new TurnLoopCommand();
     }
 
     await this.delay(20 * 1000);
     // AFK!
     if (
-      this.state.currentTurn === this.state.currentTurn &&
+      this.state.currentRound === roundNumOfTurn &&
       this.state.activePlayerID === activePlayer.id &&
       this.state.phase === "FIGHTING"
     ) {
-      new TurnLoopCommand();
-      return;
+      return new TurnLoopCommand();
+
     }
   }
 }

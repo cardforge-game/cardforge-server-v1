@@ -124,11 +124,11 @@ function getRound(phase: string, currentRound: number, room: StandardRoom) {
   let newWaitTime = 0;
   if (phase === "WAITING") {
     newPhase = "CREATING";
-    newWaitTime = 5 * 60 * 1000;
+    newWaitTime = 2 * 60 * 1000;
     room.clock.start();
   } else if (phase === "CREATING") {
     newPhase = "BUYING";
-    newWaitTime = 60 * 1000;
+    newWaitTime = 1 * 60 * 1000;
   } else if (phase === "BUYING") {
     newPhase = "FIGHTING";
     newWaitTime = 150 * 1000;
@@ -165,10 +165,12 @@ function gameLoop(room: StandardRoom) {
     room.phaseInterval.clear();
     room.dispatcher.dispatch(new CommandHandler.DisplayResultsCommand());
   }
-
+  // entering creation
+  if (room.state.phase === "CREATING"){
+    room.dispatcher.dispatch(new CommandHandler.GiveMoneyCommand());
+  }
   // Exiting creation round, entering buy round
   if (room.state.phase === "BUYING") {
-    room.dispatcher.dispatch(new CommandHandler.GiveMoneyCommand());
     room.broadcast("library", room.state.cardLibrary);
   }
 

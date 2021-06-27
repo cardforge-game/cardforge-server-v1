@@ -14,10 +14,9 @@ export class AddCardToDeckCommand extends Command<StandardState, IPayload> {
     if (!player.inventory[index]) {
       return false;
     }
-    if (player.inventory.length === 7) {
+    if (player.deck.length === 7) {
       return false;
     }
-
     return true;
   }
 

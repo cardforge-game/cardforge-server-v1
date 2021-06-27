@@ -31,20 +31,20 @@ export class Player extends Schema {
   @type(Card) activeCard: Card = null;
   @type("string") id: string;
 
-  @filter(function (client: Client, value: string) {
-    return client.sessionId === value;
+  @filter(function (client: Client, value: string,state) {
+    return client.sessionId === (this as Player).id;
   })
   @type("number")
   money: number;
 
   @filter(function (client: Client, value: string) {
-    return client.sessionId === value;
+    return client.sessionId === (this as Player).id;
   })
   @type([Card])
   inventory = new ArraySchema<Card>();
 
   @filter(function (client: Client, value: string) {
-    return client.sessionId === value;
+    return client.sessionId === (this as Player).id;
   })
   @type([Card])
   deck = new ArraySchema<Card>();
@@ -60,8 +60,8 @@ export class StandardState extends Schema {
     | "FIGHTING"
     | "RESULTS" = "WAITING"; // WAITING CREATING BUYING FIGHTING
   @type({ map: Player }) players = new MapSchema<Player>();
-  @type(["string"]) playerIdOrder: string[];
-  @type(["string"]) activePlayerID: string = null;
+  @type(["string"]) playerIdOrder: string[] = []  ;
+  @type("string") activePlayerID: string = null;
   @type("number") currentRound = 0;
   currentTurn = 0;
   cardLibrary = new ArraySchema<Card>();

@@ -4,27 +4,28 @@ import { TurnLoopCommand } from "./TurnLoop";
 export class InitRoundCommand extends Command<StandardState> {
   validate = () => true;
 
-  execute() {
+  async execute() {
     this.initPlayerOrder();
     this.giveProfits();
     //Start First Turn
-    new TurnLoopCommand();
+    return new TurnLoopCommand().setPayload(null);
   }
 
-  giveProfits = () =>
-    this.state.players.forEach((player) => {
-      if (this.state.currentRound > 0) {
+  giveProfits() {
+    this.state.players.forEach(player => {
+      if (this.state.currentRound > 1) {
         return;
       }
 
       //Show them their profits!
-      const client = this.room.clients.find((c) => c.sessionId === player.id);
+      const client = this.room.clients.find(c => c.sessionId === player.id);
       client.send("profits", player.profits);
 
       //Add profits
       player.money += player.profits;
       player.profits = 0;
-    });
+    })
+  }
 
   initPlayerOrder() {
     this.state.currentRound++;
@@ -48,7 +49,8 @@ export class InitRoundCommand extends Command<StandardState> {
       }
       aAverageHp /= aLen;
       bAverageHp /= bLen;
-      return aAverageHp > bAverageHp ? -1 : aAverageHp < bAverageHp ? 1 : 0;
+
+      return aAverageHp < bAverageHp ? -1 : aAverageHp > bAverageHp ? 1 : 0;
     });
     playersCopy.forEach((p) => this.state.playerIdOrder.push(p[1].id));
   }

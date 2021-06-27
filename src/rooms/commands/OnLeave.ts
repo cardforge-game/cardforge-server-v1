@@ -15,7 +15,6 @@ export class OnLeaveCommand extends Command<StandardState, IPayload> {
     if (wasHost) {
       // Assign first player as host
       const firstKey = this.state.players.keys().next().value;
-      console.log(firstKey);
       if (firstKey) this.state.players.get(firstKey).host = true;
     }
   }
