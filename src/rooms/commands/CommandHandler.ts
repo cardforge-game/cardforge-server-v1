@@ -9,6 +9,7 @@ import { NextPhaseCommand } from "./NextPhase"
 import { InitRoundCommand } from "./InitRound"
 import { TurnLoopCommand } from "./TurnLoop"
 import { DisplayResultsCommand } from "./DisplayResults"
+import { GiveMoneyCommand } from "./GiveMoney"
 
 //TODO: automatically do that?
 export default {
@@ -23,5 +24,6 @@ export default {
     NextPhaseCommand,
     InitRoundCommand,
     TurnLoopCommand,
-    DisplayResultsCommand
+    DisplayResultsCommand,
+    GiveMoneyCommand
 }

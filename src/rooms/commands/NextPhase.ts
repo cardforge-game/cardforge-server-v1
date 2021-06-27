@@ -1,3 +1,4 @@
+// Should we delete this
 import { Command } from "@colyseus/command";
 import { StandardState, Player } from "../schema/StandardSchema";
 

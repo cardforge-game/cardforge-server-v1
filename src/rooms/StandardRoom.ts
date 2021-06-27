@@ -29,7 +29,7 @@ export class StandardRoom extends Room<StandardState> {
 
       // Exiting creation round, entering buy round
       if (this.state.phase === 'BUYING') {
-        // GIVE MOENY
+        this.dispatcher.dispatch(new CommandHandler.GiveMoneyCommand())
         this.broadcast(
           "library",
           this.state.cardLibrary
@@ -121,7 +121,7 @@ export class StandardRoom extends Room<StandardState> {
   }
 }
 
-function (phase:string,currentRound:number){
+function getRound(phase:string,currentRound:number){
   let newPhase = "" as "WAITING"|"CREATING"|"BUYING"|"FIGHTING"|"RESULTS"
   let newWaitTime = 0;
   if (phase === 'WAITING') {
