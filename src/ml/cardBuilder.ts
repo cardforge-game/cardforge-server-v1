@@ -66,7 +66,7 @@ function parseAttack(attack: string) {
 export function buildCard(msg: ClientCardMessage, sessionId: string) {
   //Build attacks
   const summed = {
-    attack: 0,
+    damage: 0,
     heal: 0,
   } as Record<string, number>;
   const attacks = msg.attacks.map((attack) => {
@@ -88,7 +88,7 @@ export function buildCard(msg: ClientCardMessage, sessionId: string) {
 
   card.attacks = card.attacks.concat(attacks);
   card.cardCost = Math.round(
-    (card.health * 1.75) + (attacks.length) + (summed.attack * 0.5) + (summed.heal * 0.75)
+    (card.health * 1.75) + (attacks.length) + (summed.damage * 0.5) + (summed.heal * 0.75)
   );
   
   return card;
