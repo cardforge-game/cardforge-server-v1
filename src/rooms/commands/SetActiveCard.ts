@@ -11,7 +11,7 @@ export class SetActiveCardCommand extends Command<StandardState, IPayload> {
     this.state.phase === "FIGHTING" &&
     (this.state.currentTurn === 0 ||
       this.state.activePlayerID === player.id ||
-      !this.player.activeCard);
+      !player.activeCard);
   player: any;
 
   execute({ player, newActiveCardIndex }: IPayload) {
