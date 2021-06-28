@@ -7,31 +7,39 @@ export class InitRoundCommand extends Command<StandardState> {
   async execute() {
     this.initPlayerOrder();
     this.giveProfits();
-    //Start First Turn
-    return new TurnLoopCommand().setPayload(null);
+
+    //Show results if over
+    const canPlay = [...this.state.players.values()].filter(player => player.deck.length > 0).length
+    if(canPlay <= 1){
+      this.state.phase = "RESULTS"
+    }else{
+      //Start First Turn
+      return new TurnLoopCommand().setPayload(null);
+    }
   }
 
   giveProfits() {
-    this.state.players.forEach(player => {
+    this.state.players.forEach((player) => {
       if (this.state.currentRound > 1) {
         return;
       }
 
       //Show them their profits!
-      const client = this.room.clients.find(c => c.sessionId === player.id);
+      const client = this.room.clients.find((c) => c.sessionId === player.id);
       client.send("profits", player.profits);
 
       //Add profits
       player.money += player.profits;
       player.profits = 0;
-    })
+    });
   }
 
   initPlayerOrder() {
     this.state.currentRound++;
     this.state.phaseRounds++;
     this.state.currentTurn = 0;
-    const playersCopy = [...this.state.players];
+
+    const playersCopy = [...this.state.players]
     playersCopy.sort((a, b) => {
       let aAverageHp: number = 0,
         bAverageHp: number = 0,

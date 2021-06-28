@@ -129,7 +129,7 @@ function getRound(phase: string, currentPhaseRound: number, room: StandardRoom) 
     room.clock.start();
   } else if (phase === "CREATING") {
     newPhase = "BUYING";
-    newWaitTime = 0.75 * 60 * 1000;
+    newWaitTime = 1 * 60 * 1000;
   } else if (phase === "BUYING") {
     newPhase = "FIGHTING";
     newWaitTime = 150 * 1000;
@@ -150,7 +150,7 @@ function gameLoop(room: StandardRoom) {
   // Round Changer
   const newRound = getRound(room.state.phase, room.state.phaseRounds, room);
   room.state.phase = newRound.newPhase;
-  room.waitTime = newRound.newWaitTime;
+  room.waitTime = newRound.newWaitTime + 10000; //10 seconds for info
 
   //Game loop scheduler
   room.clock.setTimeout(() => {
@@ -164,7 +164,6 @@ function gameLoop(room: StandardRoom) {
   // Round over
   if (room.state.phase === "RESULTS") {
     room.phaseInterval.clear();
-    room.dispatcher.dispatch(new CommandHandler.DisplayResultsCommand());
   }
   // entering creation
   if (room.state.phase === "CREATING"){
@@ -196,7 +195,7 @@ function gameLoop(room: StandardRoom) {
 
         // Calc turns and give players profits from buy round
         room.dispatcher.dispatch(new CommandHandler.InitRoundCommand());
-      }, 5000);
+      }, 1000);
     }
   }
   if (room.state.phase === "RESULTS") {
