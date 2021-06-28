@@ -33,19 +33,19 @@ export class Player extends Schema {
   @type(Card) activeCard: Card = null;
   @type("string") id: string;
 
-  @filter(function (client: Client, value: string,state) {
+  @filter((client: Client, value: string,state) => {
     return client.sessionId === (this as Player).id;
   })
   @type("number")
   money: number;
 
-  @filter(function (client: Client, value: string) {
+  @filter((client: Client, value: string) => {
     return client.sessionId === (this as Player).id;
   })
   @type([Card])
   inventory = new ArraySchema<Card>();
 
-  @filter(function (client: Client, value: string) {
+  @filter((client: Client, value: string) => {
     return client.sessionId === (this as Player).id;
   })
   @type([Card])
